@@ -1,0 +1,6 @@
+@_2026晨辉AI_HostAddress = http://localhost:5146
+
+GET {{_2026晨辉AI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
