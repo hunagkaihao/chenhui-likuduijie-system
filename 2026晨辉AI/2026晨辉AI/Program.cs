@@ -52,6 +52,48 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.EnsureCreated();
     
+    // 手动补充 Cells 表新增列（EnsureCreated 不会在已存在的表上新增列）
+    try
+    {
+        using (var connection = new MySqlConnector.MySqlConnection(connectionString))
+        {
+            await connection.OpenAsync();
+            var existingColumns = new HashSet<string>();
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Cells'";
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        existingColumns.Add(reader.GetString(0));
+                    }
+                }
+            }
+            foreach (var column in new[] {
+                ("PalletCode", "varchar(200) NULL"),
+                ("Picima", "varchar(200) NULL"),
+                ("Tepi", "varchar(200) NULL")
+            })
+            {
+                if (!existingColumns.Contains(column.Item1))
+                {
+                    using (var cmd = connection.CreateCommand())
+                    {
+                        cmd.CommandText = $"ALTER TABLE Cells ADD COLUMN {column.Item1} {column.Item2}";
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                    Console.WriteLine($"Cells 表新增列 {column.Item1} 完成");
+                }
+            }
+        }
+        Console.WriteLine("Cells 表结构已就绪");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"补充 Cells 表列失败: {ex.Message}");
+    }
+    
     // 手动创建 BindRecords 表（EnsureCreated 不会在已有数据库上新增表）
     try
     {

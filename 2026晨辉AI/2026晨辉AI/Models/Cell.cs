@@ -32,6 +32,15 @@ namespace _2026晨辉AI.Models
         
         public int? BindQuantity { get; set; }
         
+        [StringLength(200)]
+        public string? PalletCode { get; set; }
+        
+        [StringLength(200)]
+        public string? Picima { get; set; }
+        
+        [StringLength(200)]
+        public string? Tepi { get; set; }
+        
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         
         public DateTime? LastUpdatedAt { get; set; }
