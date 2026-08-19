@@ -308,9 +308,9 @@ export default {
         })
 
         if (response.data && response.data.success) {
-          this.taskSuccess = '任务下发成功！'
           // 下发成功：清空全部（含起始位置）
           await this.resetAll()
+          this.taskSuccess = '任务下发成功！'
           setTimeout(() => { this.taskSuccess = '' }, 3000)
           this.focusInput('materialInput')
         } else if (response.data && response.data.blocked) {
