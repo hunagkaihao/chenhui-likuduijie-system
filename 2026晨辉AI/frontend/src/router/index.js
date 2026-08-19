@@ -5,6 +5,7 @@ import MaterialScanView from '../views/MaterialScanView.vue'
 import AddAgvTaskView from '../views/AddAgvTaskView.vue'
 import MaterialAndAgvTaskView from '../views/MaterialAndAgvTaskView.vue'
 import BindMaterialView from '../views/BindMaterialView.vue'
+import LaneTaskView from '../views/LaneTaskView.vue'
 import AgvTaskListView from '../views/AgvTaskListView.vue'
 import CellsView from '../views/CellsView.vue'
 import AgvStatusView from '../views/AgvStatusView.vue'
@@ -60,6 +61,11 @@ const routes = [
     path: '/bind-material',
     name: 'BindMaterial',
     component: BindMaterialView
+  },
+  {
+    path: '/lane-task',
+    name: 'LaneTask',
+    component: LaneTaskView
   },
   // 捕获所有路由，重定向到首页
   {

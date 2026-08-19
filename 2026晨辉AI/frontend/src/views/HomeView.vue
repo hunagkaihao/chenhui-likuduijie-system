@@ -25,6 +25,12 @@
           <p>单独绑定物料到托盘</p>
         </div>
       </router-link>
+      <router-link to="/lane-task" class="功能卡片">
+        <div class="卡片内容">
+          <h3>巷道任务</h3>
+          <p>绑定物料并在巷道外侧无货时下发AGV任务</p>
+        </div>
+      </router-link>
       <router-link to="/agv-task-list" class="功能卡片">
         <div class="卡片内容">
           <h3>AGV任务列表</h3>
