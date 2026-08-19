@@ -19,6 +19,12 @@
           <p>在同一页面完成物料绑定和任务创建</p>
         </div>
       </router-link>
+      <router-link to="/bind-material" class="功能卡片">
+        <div class="卡片内容">
+          <h3>物料绑定</h3>
+          <p>单独绑定物料到托盘</p>
+        </div>
+      </router-link>
       <router-link to="/agv-task-list" class="功能卡片">
         <div class="卡片内容">
           <h3>AGV任务列表</h3>
