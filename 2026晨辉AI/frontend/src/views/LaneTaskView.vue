@@ -261,6 +261,52 @@ export default {
           return
         }
 
+        // 根据物料码开头确定公司名
+        let company = ''
+        const materialId = this.materialForm.materialId
+        if (materialId.startsWith('R')) {
+          company = '光宝'
+        } else if (materialId.startsWith('@RQ')) {
+          company = '婴宝'
+        }
+
+        // 第一步：立库端绑定（物理真值），失败则中止不写库
+        const pdaResponse = await pdaAxios.post('/pda-api/PDA/RK/Bind', {
+          biaoshima: this.materialForm.materialId,
+          tuopanma: this.materialForm.palletId,
+          picima: this.materialForm.picima,
+          tepi: this.materialForm.tepi,
+          workMan: company,
+          company: company,
+          shuliang: parseInt(this.materialForm.quantity)
+        })
+
+        const result = pdaResponse.data
+        if (result) {
+          if (typeof result === 'object' && result.reStatus !== undefined) {
+            if (result.reStatus === 'E') {
+              this.materialError = result.reInfo || '立库端绑定失败'
+              return
+            } else if (result.reStatus !== 'S') {
+              this.materialError = result.reInfo || '立库端绑定失败：未知状态'
+              return
+            }
+          } else if (typeof result === 'object' && result.reInfo) {
+            const reInfoParts = result.reInfo.split(':')
+            if (reInfoParts[1] === 'N' || result.reInfo.includes('失败')) {
+              const errorMessage = reInfoParts.slice(2).join(':')
+              this.materialError = errorMessage || '立库端绑定失败'
+              return
+            }
+          } else if (Array.isArray(result)) {
+            if (result[0] === 'N' || result[0] === 'E') {
+              this.materialError = (result[1] || '') + ' ' + (result[2] || '')
+              return
+            }
+          }
+        }
+
+        // 第二步：立库端绑定成功后写本地库（Cells 镜像记录）
         const response = await axios.post('/api/LaneTasks/bind', {
           fromLocation: this.agvTask.fromLocation,
           materialId: this.materialForm.materialId,
@@ -283,7 +329,7 @@ export default {
           setTimeout(() => { this.bindSuccess = '' }, 3000)
           this.focusInput('materialInput')
         } else {
-          this.materialError = '绑定失败: ' + (response.data?.message || '未知错误')
+          this.materialError = '立库端已绑定，但本地记录失败: ' + (response.data?.message || '未知错误')
         }
       } catch (error) {
         console.error('绑定物料失败:', error)
