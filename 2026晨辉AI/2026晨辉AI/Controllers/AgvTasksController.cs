@@ -367,7 +367,20 @@ namespace _2026晨辉AI.Controllers
                     var agvTask = await _context.AgvTasks.FirstOrDefaultAsync(t => t.TaskCode == input.TaskCode);
                     if (agvTask != null)
                     {
-                        // 这里可以添加库位解绑逻辑
+                        // 出库后释放对应的起始库位：Status 置为 Available，清空绑定信息
+                        var cell = await _context.Cells.FirstOrDefaultAsync(c => c.Location == agvTask.FromLocation);
+                        if (cell != null)
+                        {
+                            cell.Status = "Available";
+                            cell.BindMaterialCode = null;
+                            cell.PalletCode = null;
+                            cell.Picima = null;
+                            cell.Tepi = null;
+                            cell.LastUpdatedAt = DateTime.Now;
+                            _context.Entry(cell).State = EntityState.Modified;
+                            _logger.LogInformation("CTU回调-出库，已释放库位: TaskCode={TaskCode}, Location={Location}",
+                                input.TaskCode, cell.Location);
+                        }
                         _context.Entry(agvTask).State = EntityState.Modified;
                         await _context.SaveChangesAsync();
                         _logger.LogInformation("CTU回调-出库: TaskCode={TaskCode}", input.TaskCode);
