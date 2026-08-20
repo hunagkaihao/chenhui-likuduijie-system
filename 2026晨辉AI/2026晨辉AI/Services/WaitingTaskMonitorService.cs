@@ -52,7 +52,7 @@ namespace _2026晨辉AI.Services
 
                 // 查找所有等待状态的任务
                 var waitingTasks = await dbContext.AgvTasks.Where(t => t.Status == "Waiting").ToListAsync();
-                _logger.LogInformation("检测到等待继续任务数量："+waitingTasks.Count);
+                //_logger.LogInformation("检测到等待继续任务数量："+waitingTasks.Count);
                 foreach (var task in waitingTasks)
                 {
                     try
