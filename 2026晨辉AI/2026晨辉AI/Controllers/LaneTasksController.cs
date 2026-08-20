@@ -75,6 +75,11 @@ namespace _2026晨辉AI.Controllers
                 return new { success = false, message = "起始位置不存在，请先绑定物料" };
             }
 
+            if (cell.Status != "Occupied")
+            {
+                return new { success = false, message = $"起始位置 {input.FromLocation} 无货物，请先绑定物料" };
+            }
+
             // 查找巷道外侧：同 CellCode 中 Location 最小者
             var laneCells = await _context.Cells
                 .Where(c => c.CellCode == cell.CellCode)
