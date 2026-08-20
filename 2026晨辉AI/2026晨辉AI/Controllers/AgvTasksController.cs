@@ -62,7 +62,7 @@ namespace _2026晨辉AI.Controllers
             agvTask.TaskType = "Y1105";
             if (!string.IsNullOrEmpty(agvTask.FromLocation) && agvTask.FromLocation.StartsWith("A"))
             {
-                agvTask.TaskType = "Y001";
+                agvTask.TaskType = "Y01";// 原任务模板 Y001
             }
             if (!string.IsNullOrEmpty(agvTask.FromLocation) && agvTask.FromLocation.StartsWith("CP"))
             {

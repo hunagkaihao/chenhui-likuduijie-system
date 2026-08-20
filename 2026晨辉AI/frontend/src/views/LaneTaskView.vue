@@ -45,7 +45,7 @@
         <div class="form-group form-group-inline">
           <label for="fromLocation">起始位置:</label>
           <div class="input-group">
-            <input type="text" id="fromLocation" ref="fromLocationInput" v-model="agvTask.fromLocation" required placeholder="例如：A00099">
+            <input type="text" id="fromLocation" ref="fromLocationInput" v-model="agvTask.fromLocation" required placeholder="例如：A099">
             <button type="button" class="btn-clear" @click="clearFromLocation">×</button>
           </div>
         </div>
@@ -306,8 +306,8 @@ export default {
           }
         }
 
-        // 第二步：立库端绑定成功后写本地库（Cells 镜像记录）
-        const response = await axios.post('/api/LaneTasks/bind', {
+        // 第二步：立库端绑定成功后写本地库（Cells 镜像记录）  原/api/LaneTasks/bind
+        const response = await axios.post('/LaneTasks/bind', {
           fromLocation: this.agvTask.fromLocation,
           materialId: this.materialForm.materialId,
           palletId: this.materialForm.palletId,
@@ -348,8 +348,8 @@ export default {
           this.taskError = '请填写起始位置'
           return
         }
-
-        const response = await axios.post('/api/LaneTasks/dispatch', {
+        // 原 /api/LaneTasks/dispatch
+        const response = await axios.post('/LaneTasks/dispatch', {
           fromLocation: this.agvTask.fromLocation
         })
 
