@@ -2,6 +2,7 @@ using _2026晨辉AI.Data;
 using _2026晨辉AI.Services;
 using _2026晨辉AI.Services.Tests;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,21 @@ if (!builder.Environment.IsDevelopment())
 {
     builder.WebHost.UseUrls("http://*:5000");
 }
+
+// 配置 Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information() // 最小级别：Information
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning) // 过滤 EF Core 的详细日志
+    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning) // 过滤 ASP.NET Core 的详细日志
+    .MinimumLevel.Override("System.Net.Http", Serilog.Events.LogEventLevel.Warning) // 过滤 HTTP 客户端日志
+    .MinimumLevel.Override("Microsoft.AspNetCore.HttpLogging", Serilog.Events.LogEventLevel.Warning) // 过滤 HTTP 请求日志
+    .WriteTo.Console()          // 输出到控制台
+    .WriteTo.File(             // 输出到本地文件
+        Path.Combine(AppContext.BaseDirectory, "Log", "log-.log"),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30)
+    .CreateLogger();
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
